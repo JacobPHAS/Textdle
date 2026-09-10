@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Letter RNG</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top, #182033, #07090f 55%);
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+.game {
+    width: min(900px, 94vw);
+    text-align: center;
+}
+
+h1 {
+    font-size: 48px;
+    margin: 0 0 8px;
+    letter-spacing: 4px;
+}
+
+.subtitle {
+    color: #8992a8;
+    margin-bottom: 35px;
+}
+
+/* STRING */
+
+.string-box {
+    min-height: 150px;
+    background: rgba(10, 13, 22, 0.9);
+    border: 2px solid #293247;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 25px;
+    box-shadow: 0 0 40px rgba(0,0,0,.5);
+}
+
+.letter {
+    width: 75px;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 52px;
+    font-weight: bold;
+
+    background: #151b29;
+    border: 2px solid #35405a;
+    border-radius: 15px;
+
+    animation: letterIn .25s ease;
+}
+
+@keyframes letterIn {
+    from {
+        opacity: 0;
+        transform: translateY(-25px) scale(.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* STATS */
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+}
+
+.stat {
+    background: #101521;
+    border: 1px solid #293247;
+    border-radius: 15px;
+    padding: 15px 30px;
+    min-width: 150px;
+}
+
+.stat-title {
+    color: #7d879d;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.stat-value {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* BUTTON */
+
+button {
+    border: none;
+    background: white;
+    color: black;
+
+    font-size: 22px;
+    font-weight: bold;
+
+    padding: 17px 55px;
+    border-radius: 15px;
+
+    cursor: pointer;
+
+    transition: .15s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255,255,255,.25);
+}
+
+button:active {
+    transform: scale(.96);
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: default;
+    transform: none;
+}
+
+/* COMBO FEED */
+
+.combo-area {
+    margin-top: 30px;
+    min-height: 170px;
+}
+
+.combo {
+    font-size: 25px;
+    font-weight: bold;
+
+    margin: 8px;
+
+    animation: comboIn .35s ease;
+}
+
+@keyframes comboIn {
+    from {
+        opacity: 0;
+        transform: translateX(-40px) scale(.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.combo.big {
+    font-size: 38px;
+}
+
+.combo.mega {
+    font-size: 48px;
+    text-shadow: 0 0 25px white;
+}
+
+.points {
+    color: #8fffa0;
+    margin-left: 8px;
+}
+
+/* HISTORY */
+
+.history {
+    margin-top: 35px;
+    background: rgba(10,13,22,.7);
+    border: 1px solid #252d40;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.history h2 {
+    margin-top: 0;
+}
+
+.history-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.history-item {
+    background: #151b29;
+    border: 1px solid #303a52;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: monospace;
+}
+
+/* MOBILE */
+
+@media(max-width:700px) {
+
+    h1 {
+        font-size: 35px;
+    }
+
+    .string-box {
+        gap: 5px;
+        padding: 15px;
+    }
+
+    .letter {
+        width: 40px;
+        height: 60px;
+        font-size: 30px;
+    }
+
+    .stat {
+        min-width: 120px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="game">
+
+    <h1>LETTER RNG</h1>
+
+    <div class="subtitle">
+        Roll a string. Find patterns. Build the combo.
+    </div>
+
+
+    <div class="string-box" id="stringBox">
+        <span style="color:#667085;">
+            Press ROLL
+        </span>
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat">
+            <div class="stat-title">Score</div>
+            <div class="stat-value" id="score">0</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-title">Combo</div>
+            <div class="stat-value" id="combo">0</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-title">Best Combo</div>
+            <div class="stat-value" id="bestCombo">0</div>
+        </div>
+
+    </div>
+
+
+    <button id="rollButton" onclick="roll()">
+        ROLL
+    </button>
+
+
+    <div class="combo-area" id="comboArea"></div>
+
+
+    <div class="history">
+
+        <h2>Roll History</h2>
+
+        <div
+            class="history-list"
+            id="historyList">
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+let score = 0;
+let combo = 0;
+let bestCombo = 0;
+
+
+/* =========================
+   RANDOM STRING
+========================= */
+
+function generateString(length = 8) {
+
+    let result = "";
+
+    for(let i = 0; i < length; i++) {
+
+        result +=
+            letters[
+                Math.floor(
+                    Math.random() * letters.length
+                )
+            ];
+
+    }
+
+    return result;
+}
+
+
+/* =========================
+   DISPLAY STRING
+========================= */
+
+async function showString(str) {
+
+    const box =
+        document.getElementById("stringBox");
+
+    box.innerHTML = "";
+
+    for(const char of str) {
+
+        const letter =
+            document.createElement("div");
+
+        letter.className = "letter";
+
+        letter.textContent = char;
+
+        box.appendChild(letter);
+
+        await sleep(120);
+    }
+}
+
+
+/* =========================
+   PATTERN DETECTION
+========================= */
+
+function detectPatterns(str) {
+
+    const patterns = [];
+
+
+    /*
+       DOUBLE
+       AA
+    */
+
+    for(let i = 0; i < str.length - 1; i++) {
+
+        if(str[i] === str[i + 1]) {
+
+            patterns.push({
+                name: "DOUBLE LETTER",
+                points: 100
+            });
+
+        }
+
+    }
+
+
+    /*
+       TRIPLE
+       AAA
+    */
+
+    for(let i = 0; i < str.length - 2; i++) {
+
+        if(
+            str[i] === str[i + 1] &&
+            str[i] === str[i + 2]
+        ) {
+
+            patterns.push({
+                name: "TRIPLE LETTER",
+                points: 500
+            });
+
+        }
+
+    }
+
+
+    /*
+       QUAD
+       AAAA
+    */
+
+    for(let i = 0; i < str.length - 3; i++) {
+
+        if(
+            str[i] === str[i + 1] &&
+            str[i] === str[i + 2] &&
+            str[i] === str[i + 3]
+        ) {
+
+            patterns.push({
+                name: "QUAD LETTER",
+                points: 2000
+            });
+
+        }
+
+    }
+
+
+    /*
+       ALPHABET RUN
+       ABCD
+    */
+
+    for(let i = 0; i < str.length - 3; i++) {
+
+        const a = str.charCodeAt(i);
+        const b = str.charCodeAt(i + 1);
+        const c = str.charCodeAt(i + 2);
+        const d = str.charCodeAt(i + 3);
+
+        if(
+            b === a + 1 &&
+            c === b + 1 &&
+            d === c + 1
+        ) {
+
+            patterns.push({
+                name: "ALPHABET RUN",
+                points: 1000
+            });
+
+        }
+
+    }
+
+
+    /*
+       REVERSE ALPHABET RUN
+       DCBA
+    */
+
+    for(let i = 0; i < str.length - 3; i++) {
+
+        const a = str.charCodeAt(i);
+        const b = str.charCodeAt(i + 1);
+        const c = str.charCodeAt(i + 2);
+        const d = str.charCodeAt(i + 3);
+
+        if(
+            b === a - 1 &&
+            c === b - 1 &&
+            d === c - 1
+        ) {
+
+            patterns.push({
+                name: "REVERSE RUN",
+                points: 1000
+            });
+
+        }
+
+    }
+
+
+    /*
+       ALTERNATING
+       ABAB
+    */
+
+    for(let i = 0; i < str.length - 3; i++) {
+
+        if(
+            str[i] === str[i + 2] &&
+            str[i + 1] === str[i + 3] &&
+            str[i] !== str[i + 1]
+        ) {
+
+            patterns.push({
+                name: "ALTERNATING PATTERN",
+                points: 750
+            });
+
+        }
+
+    }
+
+
+    /*
+       REPEATING BLOCK
+       ABCABC
+    */
+
+    for(let size = 1; size <= 3; size++) {
+
+        for(let i = 0; i + size * 2 <= str.length; i++) {
+
+            const first =
+                str.slice(i, i + size);
+
+            const second =
+                str.slice(
+                    i + size,
+                    i + size * 2
+                );
+
+            if(first === second) {
+
+                patterns.push({
+                    name: "REPEATING BLOCK",
+                    points: 1200
+                });
+
+            }
+
+        }
+
+    }
+
+
+    /*
+       RARE LETTERS
+       Q X Z
+    */
+
+    let rareCount = 0;
+
+    for(const char of str) {
+
+        if("QXZ".includes(char)) {
+            rareCount++;
+        }
+
+    }
+
+    if(rareCount >= 1) {
+
+        patterns.push({
+            name: "RARE LETTER",
+            points: rareCount * 250
+        });
+
+    }
+
+
+    /*
+       ALL UNIQUE
+    */
+
+    if(new Set(str).size === str.length) {
+
+        patterns.push({
+            name: "ALL UNIQUE",
+            points: 500
+        });
+
+    }
+
+
+    /*
+       NO VOWELS
+    */
+
+    if(!/[AEIOU]/.test(str)) {
+
+        patterns.push({
+            name: "NO VOWELS",
+            points: 400
+        });
+
+    }
+
+
+    /*
+       ALL VOWELS
+    */
+
+    if(/^[AEIOU]+$/.test(str)) {
+
+        patterns.push({
+            name: "VOWEL STORM",
+            points: 3000
+        });
+
+    }
+
+
+    /*
+       SAME FIRST/LAST
+    */
+
+    if(str[0] === str[str.length - 1]) {
+
+        patterns.push({
+            name: "BOOKEND MATCH",
+            points: 600
+        });
+
+    }
+
+
+    /*
+       PALINDROME
+    */
+
+    if(
+        str ===
+        str.split("").reverse().join("")
+    ) {
+
+        patterns.push({
+            name: "PALINDROME",
+            points: 5000
+        });
+
+    }
+
+
+    return patterns;
+}
+
+
+/* =========================
+   SHOW COMBO
+========================= */
+
+function showPatterns(patterns) {
+
+    const area =
+        document.getElementById("comboArea");
+
+    area.innerHTML = "";
+
+    if(patterns.length === 0) {
+
+        const message =
+            document.createElement("div");
+
+        message.className = "combo";
+
+        message.textContent =
+            "NO PATTERNS 😐";
+
+        area.appendChild(message);
+
+        return;
+    }
+
+
+    patterns.forEach(
+        (pattern, index) => {
+
+            setTimeout(() => {
+
+                combo++;
+
+                if(combo > bestCombo) {
+                    bestCombo = combo;
+                }
+
+                const message =
+                    document.createElement("div");
+
+                message.className = "combo";
+
+                if(combo >= 3)
+                    message.classList.add("big");
+
+                if(combo >= 6)
+                    message.classList.add("mega");
+
+                message.innerHTML =
+                    "✨ "
+                    +
+                    pattern.name
+                    +
+                    ' <span class="points">+'
+                    +
+                    pattern.points
+                    +
+                    "</span>";
+
+                area.appendChild(message);
+
+                score +=
+                    pattern.points *
+                    Math.max(1, combo);
+
+                updateStats();
+
+            }, index * 350);
+
+        }
+    );
+
+}
+
+
+/* =========================
+   ROLL
+========================= */
+
+async function roll() {
+
+    const button =
+        document.getElementById("rollButton");
+
+    button.disabled = true;
+
+
+    combo = 0;
+
+    updateStats();
+
+
+    const str =
+        generateString(8);
+
+
+    await showString(str);
+
+
+    const patterns =
+        detectPatterns(str);
+
+
+    showPatterns(patterns);
+
+
+    addHistory(str);
+
+
+    /*
+       If nothing happened,
+       reset the combo.
+    */
+
+    if(patterns.length === 0) {
+
+        combo = 0;
+
+        updateStats();
+
+    }
+
+
+    setTimeout(() => {
+
+        button.disabled = false;
+
+    }, Math.max(
+        500,
+        patterns.length * 350
+    ));
+
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function addHistory(str) {
+
+    const list =
+        document.getElementById("historyList");
+
+    const item =
+        document.createElement("div");
+
+    item.className =
+        "history-item";
+
+    item.textContent =
+        str;
+
+    list.prepend(item);
+
+
+    /*
+       Keep only last 20 rolls
+    */
+
+    while(list.children.length > 20) {
+
+        list.removeChild(
+            list.lastChild
+        );
+
+    }
+
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+function updateStats() {
+
+    document.getElementById("score")
+        .textContent = score;
+
+    document.getElementById("combo")
+        .textContent = combo;
+
+    document.getElementById("bestCombo")
+        .textContent = bestCombo;
+
+}
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function sleep(ms) {
+
+    return new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
+
+}
+
+
+/* KEYBOARD */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if(
+            event.code === "Space" &&
+            !document.getElementById("rollButton").disabled
+        ) {
+
+            event.preventDefault();
+
+            roll();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
