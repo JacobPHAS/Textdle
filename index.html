@@ -650,6 +650,19 @@ function detectPatterns(str) {
 
     }
 
+for (let i = 0; i < str.length - 2; i++) {
+
+    if (
+        str[i] === str[i + 2] &&
+        str[i] !== str[i + 1]
+    ) {
+        patterns.push({
+            name: "BOB PATTERN",
+            points: 750
+        });
+    }
+
+}
 
     return patterns;
 }
