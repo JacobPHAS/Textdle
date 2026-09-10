@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Letter RNG</title>
+<title>Textdle</title>
 
 <style>
 
@@ -16,307 +16,579 @@
 body {
     margin: 0;
     min-height: 100vh;
+
     background:
-        radial-gradient(circle at top, #182033, #07090f 55%);
+        radial-gradient(circle at 50% 0%, #1b2440 0%, #080a11 55%);
+
     color: white;
     font-family: Arial, Helvetica, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
     overflow-x: hidden;
 }
 
+
+/* =========================
+   MAIN
+========================= */
+
 .game {
-    width: min(900px, 94vw);
+    width: min(1000px, 94vw);
+    margin: auto;
     text-align: center;
+    padding: 35px 0 60px;
 }
+
 
 h1 {
-    font-size: 48px;
-    margin: 0 0 8px;
-    letter-spacing: 4px;
+    font-size: 52px;
+    letter-spacing: 6px;
+    margin: 0;
 }
 
+
 .subtitle {
-    color: #8992a8;
+    color: #8993aa;
+    margin-top: 8px;
     margin-bottom: 35px;
 }
 
-/* STRING */
+
+/* =========================
+   STRING
+========================= */
 
 .string-box {
-    min-height: 150px;
-    background: rgba(10, 13, 22, 0.9);
-    border: 2px solid #293247;
+
+    min-height: 145px;
+
+    background: rgba(10, 13, 22, .92);
+
+    border: 2px solid #303a53;
+
     border-radius: 25px;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 12px;
-    padding: 25px;
-    box-shadow: 0 0 40px rgba(0,0,0,.5);
+
+    gap: 10px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,.5);
+
 }
 
+
 .letter {
+
     width: 75px;
     height: 90px;
+
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
     font-size: 52px;
     font-weight: bold;
 
     background: #151b29;
-    border: 2px solid #35405a;
+
+    border: 2px solid #3a465f;
+
     border-radius: 15px;
 
     animation: letterIn .25s ease;
+
+    transition: .2s;
+
 }
 
+
+.letter.pattern {
+
+    transform:
+        scale(1.12);
+
+    box-shadow:
+        0 0 30px white;
+
+    border-color: white;
+
+}
+
+
 @keyframes letterIn {
+
     from {
         opacity: 0;
-        transform: translateY(-25px) scale(.7);
+        transform: translateY(-30px) scale(.7);
     }
 
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+
 }
 
-/* STATS */
+
+/* =========================
+   STATS
+========================= */
 
 .stats {
+
     display: flex;
     justify-content: center;
-    gap: 25px;
+
+    gap: 18px;
+
     margin: 25px 0;
+
     flex-wrap: wrap;
 }
 
+
 .stat {
+
     background: #101521;
+
     border: 1px solid #293247;
+
     border-radius: 15px;
-    padding: 15px 30px;
+
+    padding: 14px 30px;
+
     min-width: 150px;
+
 }
+
 
 .stat-title {
+
     color: #7d879d;
-    font-size: 13px;
+
+    font-size: 12px;
+
     text-transform: uppercase;
+
     letter-spacing: 2px;
+
 }
+
 
 .stat-value {
+
     font-size: 30px;
+
     font-weight: bold;
+
     margin-top: 5px;
+
 }
 
-/* BUTTON */
+
+/* =========================
+   ROLL BUTTON
+========================= */
 
 button {
+
     border: none;
+
     background: white;
+
     color: black;
 
     font-size: 22px;
+
     font-weight: bold;
 
-    padding: 17px 55px;
+    padding: 17px 60px;
+
     border-radius: 15px;
 
     cursor: pointer;
 
     transition: .15s;
+
 }
+
 
 button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(255,255,255,.25);
+
+    transform: scale(1.06);
+
+    box-shadow:
+        0 0 30px rgba(255,255,255,.25);
+
 }
+
 
 button:active {
-    transform: scale(.96);
+
+    transform: scale(.94);
+
 }
+
 
 button:disabled {
-    opacity: .5;
+
+    opacity: .45;
+
     cursor: default;
+
     transform: none;
+
 }
 
-/* COMBO FEED */
 
-.combo-area {
-    margin-top: 30px;
-    min-height: 170px;
-}
+/* =========================
+   COMBO POPUPS
+========================= */
 
-.combo {
-    font-size: 25px;
+.combo-popup {
+
+    position: fixed;
+
+    pointer-events: none;
+
+    z-index: 1000;
+
+    font-size: 26px;
+
     font-weight: bold;
 
-    margin: 8px;
+    text-shadow:
+        0 0 10px black,
+        0 0 20px currentColor;
 
-    animation: comboIn .35s ease;
+    animation:
+        popup 1.5s ease forwards;
+
 }
 
-@keyframes comboIn {
-    from {
-        opacity: 0;
-        transform: translateX(-40px) scale(.7);
-    }
 
-    to {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-    }
-}
+.combo-popup.big {
 
-.combo.big {
     font-size: 38px;
+
 }
 
-.combo.mega {
-    font-size: 48px;
-    text-shadow: 0 0 25px white;
+
+.combo-popup.mega {
+
+    font-size: 52px;
+
 }
 
-.points {
-    color: #8fffa0;
-    margin-left: 8px;
+
+@keyframes popup {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px)
+            scale(.5)
+            rotate(-5deg);
+
+    }
+
+    15% {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1.15)
+            rotate(0);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            translateY(-80px)
+            scale(1.1);
+
+    }
+
 }
 
-/* HISTORY */
+
+/* =========================
+   COMBO DISPLAY
+========================= */
+
+.combo-display {
+
+    margin-top: 25px;
+
+    min-height: 70px;
+
+}
+
+
+.combo-number {
+
+    font-size: 42px;
+
+    font-weight: bold;
+
+    text-shadow:
+        0 0 20px rgba(255,255,255,.5);
+
+}
+
+
+.multiplier {
+
+    color: #aeb8cf;
+
+}
+
+
+/* =========================
+   HISTORY
+========================= */
 
 .history {
-    margin-top: 35px;
+
+    margin-top: 40px;
+
     background: rgba(10,13,22,.7);
+
     border: 1px solid #252d40;
+
     border-radius: 20px;
+
     padding: 20px;
+
 }
+
 
 .history h2 {
+
     margin-top: 0;
+
 }
+
 
 .history-list {
+
     display: flex;
+
     flex-wrap: wrap;
+
     justify-content: center;
+
     gap: 8px;
+
 }
+
 
 .history-item {
+
     background: #151b29;
+
     border: 1px solid #303a52;
+
     padding: 8px 12px;
+
     border-radius: 8px;
+
     font-family: monospace;
+
 }
 
-/* MOBILE */
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:700px) {
 
     h1 {
-        font-size: 35px;
+        font-size: 38px;
     }
 
     .string-box {
         gap: 5px;
-        padding: 15px;
+        padding: 12px;
     }
 
     .letter {
-        width: 40px;
+        width: 39px;
         height: 60px;
         font-size: 30px;
     }
 
     .stat {
-        min-width: 120px;
+        min-width: 110px;
+        padding: 12px;
     }
 
 }
 
 </style>
+
 </head>
 
 
 <body>
 
+
 <div class="game">
 
-    <h1>LETTER RNG</h1>
 
-    <div class="subtitle">
-        Roll a string. Find patterns. Build the combo.
-    </div>
+<h1>TEXTDLE</h1>
 
-
-    <div class="string-box" id="stringBox">
-        <span style="color:#667085;">
-            Press ROLL
-        </span>
-    </div>
+<div class="subtitle">
+Roll letters. Find patterns. Build the combo.
+</div>
 
 
-    <div class="stats">
+<div
+    class="string-box"
+    id="stringBox"
+>
 
-        <div class="stat">
-            <div class="stat-title">Score</div>
-            <div class="stat-value" id="score">0</div>
-        </div>
+<span style="color:#667085;">
+    PRESS ROLL
+</span>
 
-        <div class="stat">
-            <div class="stat-title">Combo</div>
-            <div class="stat-value" id="combo">0</div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-title">Best Combo</div>
-            <div class="stat-value" id="bestCombo">0</div>
-        </div>
-
-    </div>
+</div>
 
 
-    <button id="rollButton" onclick="roll()">
-        ROLL
-    </button>
+<div class="stats">
 
 
-    <div class="combo-area" id="comboArea"></div>
+<div class="stat">
+
+<div class="stat-title">
+Score
+</div>
+
+<div
+    class="stat-value"
+    id="score"
+>
+0
+</div>
+
+</div>
 
 
-    <div class="history">
+<div class="stat">
 
-        <h2>Roll History</h2>
+<div class="stat-title">
+Combo
+</div>
 
-        <div
-            class="history-list"
-            id="historyList">
-        </div>
+<div
+    class="stat-value"
+    id="combo"
+>
+0
+</div>
 
-    </div>
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+Best Combo
+</div>
+
+<div
+    class="stat-value"
+    id="bestCombo"
+>
+0
+</div>
+
+</div>
+
+
+</div>
+
+
+<button
+    id="rollButton"
+    onclick="roll()"
+>
+ROLL
+</button>
+
+
+<div class="combo-display">
+
+<div
+    class="combo-number"
+    id="comboText"
+>
+READY?
+</div>
+
+<div
+    class="multiplier"
+    id="multiplierText"
+>
+x1 multiplier
+</div>
+
+</div>
+
+
+<div class="history">
+
+<h2>
+Roll History
+</h2>
+
+<div
+    class="history-list"
+    id="historyList"
+>
+</div>
+
+</div>
+
 
 </div>
 
 
 <script>
 
-const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+/* =========================
+   GAME VARIABLES
+========================= */
+
+const letters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 
 let score = 0;
+
 let combo = 0;
+
 let bestCombo = 0;
+
+let audioContext = null;
 
 
 /* =========================
@@ -327,12 +599,17 @@ function generateString(length = 8) {
 
     let result = "";
 
-    for(let i = 0; i < length; i++) {
+    for(
+        let i = 0;
+        i < length;
+        i++
+    ) {
 
         result +=
             letters[
                 Math.floor(
-                    Math.random() * letters.length
+                    Math.random() *
+                    letters.length
                 )
             ];
 
@@ -343,29 +620,140 @@ function generateString(length = 8) {
 
 
 /* =========================
-   DISPLAY STRING
+   AUDIO
+========================= */
+
+function getAudio() {
+
+    if(!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    return audioContext;
+
+}
+
+
+function playTone(
+    frequency,
+    duration = .12,
+    type = "sine"
+) {
+
+    try {
+
+        const audio =
+            getAudio();
+
+        const oscillator =
+            audio.createOscillator();
+
+        const gain =
+            audio.createGain();
+
+        oscillator.type = type;
+
+        oscillator.frequency.value =
+            frequency;
+
+        gain.gain.setValueAtTime(
+            .08,
+            audio.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            audio.currentTime + duration
+        );
+
+        oscillator.connect(gain);
+
+        gain.connect(
+            audio.destination
+        );
+
+        oscillator.start();
+
+        oscillator.stop(
+            audio.currentTime + duration
+        );
+
+    }
+
+    catch(e) {}
+
+}
+
+
+function patternSound(power) {
+
+    playTone(
+        350 + power * 80,
+        .15,
+        "square"
+    );
+
+}
+
+
+function comboSound(combo) {
+
+    playTone(
+        400 + combo * 70,
+        .2,
+        "sawtooth"
+    );
+
+}
+
+
+/* =========================
+   SHOW STRING
 ========================= */
 
 async function showString(str) {
 
     const box =
-        document.getElementById("stringBox");
+        document.getElementById(
+            "stringBox"
+        );
 
     box.innerHTML = "";
+
 
     for(const char of str) {
 
         const letter =
             document.createElement("div");
 
-        letter.className = "letter";
+        letter.className =
+            "letter";
 
-        letter.textContent = char;
+        letter.textContent =
+            char;
 
-        box.appendChild(letter);
+        box.appendChild(
+            letter
+        );
 
-        await sleep(120);
+
+        playTone(
+            250,
+            .06,
+            "sine"
+        );
+
+
+        await sleep(100);
+
     }
+
 }
 
 
@@ -379,17 +767,31 @@ function detectPatterns(str) {
 
 
     /*
-       DOUBLE
-       AA
+    DOUBLE
+    AA
     */
 
-    for(let i = 0; i < str.length - 1; i++) {
+    for(
+        let i = 0;
+        i < str.length - 1;
+        i++
+    ) {
 
-        if(str[i] === str[i + 1]) {
+        if(
+            str[i] === str[i + 1]
+        ) {
 
             patterns.push({
-                name: "DOUBLE LETTER",
-                points: 100
+
+                name:
+                    "DOUBLE LETTER",
+
+                points:
+                    100,
+
+                power:
+                    1
+
             });
 
         }
@@ -398,11 +800,15 @@ function detectPatterns(str) {
 
 
     /*
-       TRIPLE
-       AAA
+    TRIPLE
+    AAA
     */
 
-    for(let i = 0; i < str.length - 2; i++) {
+    for(
+        let i = 0;
+        i < str.length - 2;
+        i++
+    ) {
 
         if(
             str[i] === str[i + 1] &&
@@ -410,8 +816,16 @@ function detectPatterns(str) {
         ) {
 
             patterns.push({
-                name: "TRIPLE LETTER",
-                points: 500
+
+                name:
+                    "TRIPLE LETTER",
+
+                points:
+                    500,
+
+                power:
+                    3
+
             });
 
         }
@@ -420,11 +834,15 @@ function detectPatterns(str) {
 
 
     /*
-       QUAD
-       AAAA
+    QUAD
+    AAAA
     */
 
-    for(let i = 0; i < str.length - 3; i++) {
+    for(
+        let i = 0;
+        i < str.length - 3;
+        i++
+    ) {
 
         if(
             str[i] === str[i + 1] &&
@@ -433,8 +851,16 @@ function detectPatterns(str) {
         ) {
 
             patterns.push({
-                name: "QUAD LETTER",
-                points: 2000
+
+                name:
+                    "QUAD LETTER",
+
+                points:
+                    2000,
+
+                power:
+                    6
+
             });
 
         }
@@ -443,77 +869,32 @@ function detectPatterns(str) {
 
 
     /*
-       ALPHABET RUN
-       ABCD
+    BOB
+    ABA
     */
 
-    for(let i = 0; i < str.length - 3; i++) {
-
-        const a = str.charCodeAt(i);
-        const b = str.charCodeAt(i + 1);
-        const c = str.charCodeAt(i + 2);
-        const d = str.charCodeAt(i + 3);
-
-        if(
-            b === a + 1 &&
-            c === b + 1 &&
-            d === c + 1
-        ) {
-
-            patterns.push({
-                name: "ALPHABET RUN",
-                points: 1000
-            });
-
-        }
-
-    }
-
-
-    /*
-       REVERSE ALPHABET RUN
-       DCBA
-    */
-
-    for(let i = 0; i < str.length - 3; i++) {
-
-        const a = str.charCodeAt(i);
-        const b = str.charCodeAt(i + 1);
-        const c = str.charCodeAt(i + 2);
-        const d = str.charCodeAt(i + 3);
-
-        if(
-            b === a - 1 &&
-            c === b - 1 &&
-            d === c - 1
-        ) {
-
-            patterns.push({
-                name: "REVERSE RUN",
-                points: 1000
-            });
-
-        }
-
-    }
-
-
-    /*
-       ALTERNATING
-       ABAB
-    */
-
-    for(let i = 0; i < str.length - 3; i++) {
+    for(
+        let i = 0;
+        i < str.length - 2;
+        i++
+    ) {
 
         if(
             str[i] === str[i + 2] &&
-            str[i + 1] === str[i + 3] &&
             str[i] !== str[i + 1]
         ) {
 
             patterns.push({
-                name: "ALTERNATING PATTERN",
-                points: 750
+
+                name:
+                    "BOB PATTERN",
+
+                points:
+                    750,
+
+                power:
+                    3
+
             });
 
         }
@@ -522,16 +903,198 @@ function detectPatterns(str) {
 
 
     /*
-       REPEATING BLOCK
-       ABCABC
+    AABB
     */
 
-    for(let size = 1; size <= 3; size++) {
+    for(
+        let i = 0;
+        i < str.length - 3;
+        i++
+    ) {
 
-        for(let i = 0; i + size * 2 <= str.length; i++) {
+        if(
+
+            str[i] === str[i + 1] &&
+
+            str[i + 2] === str[i + 3] &&
+
+            str[i] !== str[i + 2]
+
+        ) {
+
+            patterns.push({
+
+                name:
+                    "DOUBLE DOUBLE",
+
+                points:
+                    1200,
+
+                power:
+                    4
+
+            });
+
+        }
+
+    }
+
+
+    /*
+    ABCD
+    */
+
+    for(
+        let i = 0;
+        i < str.length - 3;
+        i++
+    ) {
+
+        let a =
+            str.charCodeAt(i);
+
+        let b =
+            str.charCodeAt(i + 1);
+
+        let c =
+            str.charCodeAt(i + 2);
+
+        let d =
+            str.charCodeAt(i + 3);
+
+
+        if(
+
+            b === a + 1 &&
+            c === b + 1 &&
+            d === c + 1
+
+        ) {
+
+            patterns.push({
+
+                name:
+                    "ALPHABET RUN",
+
+                points:
+                    1500,
+
+                power:
+                    5
+
+            });
+
+        }
+
+    }
+
+
+    /*
+    DCBA
+    */
+
+    for(
+        let i = 0;
+        i < str.length - 3;
+        i++
+    ) {
+
+        let a =
+            str.charCodeAt(i);
+
+        let b =
+            str.charCodeAt(i + 1);
+
+        let c =
+            str.charCodeAt(i + 2);
+
+        let d =
+            str.charCodeAt(i + 3);
+
+
+        if(
+
+            b === a - 1 &&
+            c === b - 1 &&
+            d === c - 1
+
+        ) {
+
+            patterns.push({
+
+                name:
+                    "REVERSE RUN",
+
+                points:
+                    1500,
+
+                power:
+                    5
+
+            });
+
+        }
+
+    }
+
+
+    /*
+    ABAB
+    */
+
+    for(
+        let i = 0;
+        i < str.length - 3;
+        i++
+    ) {
+
+        if(
+
+            str[i] === str[i + 2] &&
+            str[i + 1] === str[i + 3] &&
+            str[i] !== str[i + 1]
+
+        ) {
+
+            patterns.push({
+
+                name:
+                    "ALTERNATING",
+
+                points:
+                    1000,
+
+                power:
+                    4
+
+            });
+
+        }
+
+    }
+
+
+    /*
+    ABCABC
+    */
+
+    for(
+        let size = 1;
+        size <= 3;
+        size++
+    ) {
+
+        for(
+            let i = 0;
+            i + size * 2 <= str.length;
+            i++
+        ) {
 
             const first =
-                str.slice(i, i + size);
+                str.slice(
+                    i,
+                    i + size
+                );
 
             const second =
                 str.slice(
@@ -539,11 +1102,22 @@ function detectPatterns(str) {
                     i + size * 2
                 );
 
-            if(first === second) {
+
+            if(
+                first === second
+            ) {
 
                 patterns.push({
-                    name: "REPEATING BLOCK",
-                    points: 1200
+
+                    name:
+                        "REPEATING BLOCK",
+
+                    points:
+                        1200,
+
+                    power:
+                        4
+
                 });
 
             }
@@ -554,192 +1128,447 @@ function detectPatterns(str) {
 
 
     /*
-       RARE LETTERS
-       Q X Z
-    */
-
-    let rareCount = 0;
-
-    for(const char of str) {
-
-        if("QXZ".includes(char)) {
-            rareCount++;
-        }
-
-    }
-
-    if(rareCount >= 1) {
-
-        patterns.push({
-            name: "RARE LETTER",
-            points: rareCount * 250
-        });
-
-    }
-
-
-    /*
-       ALL UNIQUE
-    */
-
-    if(new Set(str).size === str.length) {
-
-        patterns.push({
-            name: "ALL UNIQUE",
-            points: 500
-        });
-
-    }
-
-
-    /*
-       NO VOWELS
-    */
-
-    if(!/[AEIOU]/.test(str)) {
-
-        patterns.push({
-            name: "NO VOWELS",
-            points: 400
-        });
-
-    }
-
-
-    /*
-       ALL VOWELS
-    */
-
-    if(/^[AEIOU]+$/.test(str)) {
-
-        patterns.push({
-            name: "VOWEL STORM",
-            points: 3000
-        });
-
-    }
-
-
-    /*
-       SAME FIRST/LAST
-    */
-
-    if(str[0] === str[str.length - 1]) {
-
-        patterns.push({
-            name: "BOOKEND MATCH",
-            points: 600
-        });
-
-    }
-
-
-    /*
-       PALINDROME
+    PALINDROME
     */
 
     if(
         str ===
-        str.split("").reverse().join("")
+        str.split("")
+            .reverse()
+            .join("")
     ) {
 
         patterns.push({
-            name: "PALINDROME",
-            points: 5000
+
+            name:
+                "PALINDROME",
+
+            points:
+                10000,
+
+            power:
+                10
+
         });
 
     }
 
-for (let i = 0; i < str.length - 2; i++) {
 
-    if (
-        str[i] === str[i + 2] &&
-        str[i] !== str[i + 1]
+    /*
+    ALL UNIQUE
+    */
+
+    if(
+        new Set(str).size ===
+        str.length
     ) {
+
         patterns.push({
-            name: "BOB PATTERN",
-            points: 750
+
+            name:
+                "ALL UNIQUE",
+
+            points:
+                500,
+
+            power:
+                2
+
         });
+
     }
 
-}
+
+    /*
+    NO VOWELS
+    */
+
+    if(
+        !/[AEIOU]/.test(str)
+    ) {
+
+        patterns.push({
+
+            name:
+                "NO VOWELS",
+
+            points:
+                700,
+
+            power:
+                2
+
+        });
+
+    }
+
+
+    /*
+    ALL VOWELS
+    */
+
+    if(
+        /^[AEIOU]+$/.test(str)
+    ) {
+
+        patterns.push({
+
+            name:
+                "VOWEL STORM",
+
+            points:
+                5000,
+
+            power:
+                8
+
+        });
+
+    }
+
+
+    /*
+    RARE LETTERS
+    */
+
+    let rareCount = 0;
+
+
+    for(
+        const char of str
+    ) {
+
+        if(
+            "QXZ".includes(char)
+        ) {
+
+            rareCount++;
+
+        }
+
+    }
+
+
+    if(
+        rareCount > 0
+    ) {
+
+        patterns.push({
+
+            name:
+                rareCount >= 3
+                    ? "RARE LETTER STORM"
+                    : "RARE LETTER",
+
+            points:
+                rareCount * 300,
+
+            power:
+                rareCount + 1
+
+        });
+
+    }
+
+
+    /*
+    BOOKENDS
+    */
+
+    if(
+        str[0] ===
+        str[str.length - 1]
+    ) {
+
+        patterns.push({
+
+            name:
+                "BOOKEND MATCH",
+
+            points:
+                600,
+
+            power:
+                2
+
+        });
+
+    }
+
+
+    /*
+    MIRROR PAIR
+    Example:
+    ABCCBA
+    */
+
+    if(
+        str[0] === str[5] &&
+        str[1] === str[4] &&
+        str[2] === str[3]
+    ) {
+
+        patterns.push({
+
+            name:
+                "MIRROR PATTERN",
+
+            points:
+                3500,
+
+            power:
+                7
+
+        });
+
+    }
+
+
+    /*
+    TWO PAIRS
+    */
+
+    let counts = {};
+
+    for(
+        const char of str
+    ) {
+
+        counts[char] =
+            (counts[char] || 0) + 1;
+
+    }
+
+
+    let pairCount = 0;
+
+    for(
+        const char in counts
+    ) {
+
+        if(
+            counts[char] === 2
+        ) {
+
+            pairCount++;
+
+        }
+
+    }
+
+
+    if(
+        pairCount >= 2
+    ) {
+
+        patterns.push({
+
+            name:
+                "MULTIPLE PAIRS",
+
+            points:
+                900,
+
+            power:
+                3
+
+        });
+
+    }
+
 
     return patterns;
+
 }
 
 
 /* =========================
-   SHOW COMBO
+   POPUP
 ========================= */
 
-function showPatterns(patterns) {
+function createPopup(
+    pattern,
+    comboNumber
+) {
 
-    const area =
-        document.getElementById("comboArea");
+    const popup =
+        document.createElement(
+            "div"
+        );
 
-    area.innerHTML = "";
+    popup.className =
+        "combo-popup";
 
-    if(patterns.length === 0) {
 
-        const message =
-            document.createElement("div");
+    if(
+        comboNumber >= 3
+    ) {
 
-        message.className = "combo";
+        popup.classList.add(
+            "big"
+        );
 
-        message.textContent =
-            "NO PATTERNS 😐";
-
-        area.appendChild(message);
-
-        return;
     }
 
 
-    patterns.forEach(
-        (pattern, index) => {
+    if(
+        comboNumber >= 6
+    ) {
 
-            setTimeout(() => {
+        popup.classList.add(
+            "mega"
+        );
 
-                combo++;
+    }
 
-                if(combo > bestCombo) {
-                    bestCombo = combo;
-                }
 
-                const message =
-                    document.createElement("div");
+    popup.textContent =
+        "✨ "
+        +
+        pattern.name
+        +
+        " +"
+        +
+        pattern.points;
 
-                message.className = "combo";
 
-                if(combo >= 3)
-                    message.classList.add("big");
+    /*
+       Keep popups away from
+       the very edges of screen
+    */
 
-                if(combo >= 6)
-                    message.classList.add("mega");
+    const x =
+        10 +
+        Math.random() * 75;
 
-                message.innerHTML =
-                    "✨ "
-                    +
-                    pattern.name
-                    +
-                    ' <span class="points">+'
-                    +
-                    pattern.points
-                    +
-                    "</span>";
+    const y =
+        15 +
+        Math.random() * 65;
 
-                area.appendChild(message);
 
-                score +=
-                    pattern.points *
-                    Math.max(1, combo);
+    popup.style.left =
+        x + "%";
 
-                updateStats();
+    popup.style.top =
+        y + "%";
 
-            }, index * 350);
+
+    document.body.appendChild(
+        popup
+    );
+
+
+    setTimeout(
+        () => popup.remove(),
+        1500
+    );
+
+}
+
+
+/* =========================
+   RUN PATTERNS
+========================= */
+
+async function runPatterns(
+    patterns
+) {
+
+    if(
+        patterns.length === 0
+    ) {
+
+        combo = 0;
+
+        document.getElementById(
+            "comboText"
+        ).textContent =
+            "NO PATTERNS 😐";
+
+        document.getElementById(
+            "multiplierText"
+        ).textContent =
+            "x1 multiplier";
+
+        updateStats();
+
+        return;
+
+    }
+
+
+    for(
+        const pattern of patterns
+    ) {
+
+        combo++;
+
+
+        if(
+            combo > bestCombo
+        ) {
+
+            bestCombo =
+                combo;
 
         }
-    );
+
+
+        /*
+           Combo multiplier
+        */
+
+        const multiplier =
+            Math.min(
+                10,
+                1 +
+                Math.floor(
+                    combo / 2
+                )
+            );
+
+
+        const earned =
+            pattern.points *
+            multiplier;
+
+
+        score += earned;
+
+
+        createPopup(
+            pattern,
+            combo
+        );
+
+
+        comboSound(combo);
+
+
+        document.getElementById(
+            "comboText"
+        ).textContent =
+            "🔥 COMBO x"
+            +
+            combo;
+
+
+        document.getElementById(
+            "multiplierText"
+        ).textContent =
+            "x"
+            +
+            multiplier
+            +
+            " MULTIPLIER";
+
+
+        updateStats();
+
+
+        await sleep(400);
+
+    }
 
 }
 
@@ -751,55 +1580,69 @@ function showPatterns(patterns) {
 async function roll() {
 
     const button =
-        document.getElementById("rollButton");
+        document.getElementById(
+            "rollButton"
+        );
 
-    button.disabled = true;
+
+    button.disabled =
+        true;
 
 
     combo = 0;
 
-    updateStats();
+
+    document.getElementById(
+        "comboText"
+    ).textContent =
+        "ROLLING...";
 
 
-    const str =
+    document.getElementById(
+        "multiplierText"
+    ).textContent =
+        "x1 multiplier";
+
+
+    const string =
         generateString(8);
 
 
-    await showString(str);
+    await showString(
+        string
+    );
 
 
     const patterns =
-        detectPatterns(str);
+        detectPatterns(
+            string
+        );
 
 
-    showPatterns(patterns);
+    await runPatterns(
+        patterns
+    );
 
 
-    addHistory(str);
+    addHistory(
+        string
+    );
 
 
-    /*
-       If nothing happened,
-       reset the combo.
-    */
+    setTimeout(
+        () => {
 
-    if(patterns.length === 0) {
+            button.disabled =
+                false;
 
-        combo = 0;
+        },
 
-        updateStats();
+        Math.max(
+            500,
+            patterns.length * 400
+        )
 
-    }
-
-
-    setTimeout(() => {
-
-        button.disabled = false;
-
-    }, Math.max(
-        500,
-        patterns.length * 350
-    ));
+    );
 
 }
 
@@ -808,28 +1651,38 @@ async function roll() {
    HISTORY
 ========================= */
 
-function addHistory(str) {
+function addHistory(
+    string
+) {
 
     const list =
-        document.getElementById("historyList");
+        document.getElementById(
+            "historyList"
+        );
+
 
     const item =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     item.className =
         "history-item";
 
+
     item.textContent =
-        str;
-
-    list.prepend(item);
+        string;
 
 
-    /*
-       Keep only last 20 rolls
-    */
+    list.prepend(
+        item
+    );
 
-    while(list.children.length > 20) {
+
+    while(
+        list.children.length > 20
+    ) {
 
         list.removeChild(
             list.lastChild
@@ -846,32 +1699,46 @@ function addHistory(str) {
 
 function updateStats() {
 
-    document.getElementById("score")
-        .textContent = score;
+    document.getElementById(
+        "score"
+    ).textContent =
+        score;
 
-    document.getElementById("combo")
-        .textContent = combo;
 
-    document.getElementById("bestCombo")
-        .textContent = bestCombo;
+    document.getElementById(
+        "combo"
+    ).textContent =
+        combo;
+
+
+    document.getElementById(
+        "bestCombo"
+    ).textContent =
+        bestCombo;
 
 }
 
 
 /* =========================
-   HELPERS
+   HELPER
 ========================= */
 
 function sleep(ms) {
 
     return new Promise(
-        resolve => setTimeout(resolve, ms)
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
     );
 
 }
 
 
-/* KEYBOARD */
+/* =========================
+   SPACEBAR
+========================= */
 
 document.addEventListener(
     "keydown",
@@ -879,7 +1746,9 @@ document.addEventListener(
 
         if(
             event.code === "Space" &&
-            !document.getElementById("rollButton").disabled
+            !document.getElementById(
+                "rollButton"
+            ).disabled
         ) {
 
             event.preventDefault();
@@ -891,7 +1760,9 @@ document.addEventListener(
     }
 );
 
+
 </script>
 
 </body>
+
 </html>
